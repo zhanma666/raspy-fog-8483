@@ -47,24 +47,9 @@ const RECOMMENDED_WORDS = {
 };
 
 /**
- * 文本分析结果
- */
-interface AnalysisResult {
-  wordCount: number;           // 总字数
-  charCount: number;           // 字符数（不含空格）
-  sentenceCount: number;       // 句子数量
-  paragraphCount: number;      // 段落数量
-  avgSentenceLength: number;   // 平均句长
-  errors: TextError[];         // 发现的错误
-  suggestions: TextSuggestion[]; // 建议
-  keywords: string[];          // 关键词
-  readability: number;         // 可读性评分
-}
-
-/**
  * 文本错误
  */
-interface TextError {
+export interface TextError {
   type: 'repeated' | 'grammar' | 'style' | 'length';
   message: string;
   position: number;
@@ -75,11 +60,26 @@ interface TextError {
 /**
  * 文本建议
  */
-interface TextSuggestion {
+export interface TextSuggestion {
   type: 'improvement' | 'enhancement' | 'recommendation';
   message: string;
   position: number;
   relatedText: string;
+}
+
+/**
+ * 文本分析结果
+ */
+export interface AnalysisResult {
+  wordCount: number;           // 总字数
+  charCount: number;           // 字符数（不含空格）
+  sentenceCount: number;       // 句子数量
+  paragraphCount: number;      // 段落数量
+  avgSentenceLength: number;   // 平均句长
+  errors: TextError[];         // 发现的错误
+  suggestions: TextSuggestion[]; // 建议
+  keywords: string[];          // 关键词
+  readability: number;         // 可读性评分
 }
 
 /**

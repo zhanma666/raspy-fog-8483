@@ -57,6 +57,24 @@ class ChineseSegmenter {
 }
 
 // 高级分析器类
+// 定义高级分析结果接口
+export interface AdvancedAnalysisResult {
+  basic: {
+    charCount: number;
+    wordCount: number;
+    sentenceCount: number;
+    paragraphCount: number;
+    avgSentenceLength: number;
+    textLength: number;
+  };
+  segments: string[];
+  wordFrequency: Record<string, number>;
+  readability: number;
+  coherence: number;
+  topicRelevance: number;
+  suggestions: string[];
+}
+
 export class AdvancedChineseAnalyzer {
   /**
    * 执行全面的文本分析
@@ -65,14 +83,20 @@ export class AdvancedChineseAnalyzer {
     const segments = ChineseSegmenter.segment(text);
     const wordFrequency = this.calculateWordFrequency(segments);
     
+    // 使用 segments 来计算各项指标
+    const readability = this.calculateReadability(text, segments);
+    const coherence = this.assessCoherence(segments);
+    const topicRelevance = this.assessTopicRelevance(text, segments);
+    const suggestions = this.generateSuggestions(text, segments);
+    
     return {
       basic: this.basicAnalysis(text),
-      segments,
+      segments, // 直接使用 segments 变量，这是对变量的有效使用
       wordFrequency,
-      readability: this.calculateReadability(text, segments),
-      coherence: this.assessCoherence(segments),
-      topicRelevance: this.assessTopicRelevance(text, segments),
-      suggestions: this.generateSuggestions(text, segments)
+      readability,
+      coherence,
+      topicRelevance,
+      suggestions
     };
   }
 

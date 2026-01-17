@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref, reactive } from 'vue';
+import SmartValidationPanel from '../components/SmartValidationPanel.vue';
 
 // 智能校验类型
 const checkTypes = [
@@ -78,6 +79,24 @@ const getScoreClass = (score: number): string => {
   return 'score-poor';
 };
 
+// 获取占位符文本
+const getPlaceholderText = (): string => {
+  switch (formData.checkType) {
+    case 'project_scale':
+      return '请输入项目规模相关信息，包括项目预算、人员配置、技术架构等内容...';
+    case 'background_analysis':
+      return '请输入项目背景相关信息，包括项目发起单位、项目目标、业务需求等内容...';
+    case 'transition_check':
+      return '请输入需要检查过渡段的内容...';
+    case 'conclusion_check':
+      return '请输入结尾段内容，包括总结、经验、展望等内容...';
+    case 'management_check':
+      return '请输入项目管理相关内容，包括十大管理领域的实施情况...';
+    default:
+      return '请输入需要校验的内容...';
+  }
+};
+
 // 执行智能校验
 const executeCheck = () => {
   result.value.isLoading = true;
@@ -98,129 +117,107 @@ const executeCheck = () => {
         result.value.success = true;
         result.value.score = 85;
         result.value.message = '项目规模校验完成';
-        result.value.type = 'project_scale';
+        result.value.type = '项目规模智能校验';
         result.value.strengths = [
-          '项目背景金额设置合理',
-          '人数配比符合行业标准',
-          '项目目标明确'
+          '项目规模设定合理，符合实际业务需求',
+          '人员配置比例恰当，技术架构清晰',
+          '预算估算详细，风险评估充分'
         ];
         result.value.weaknesses = [
-          '缺少项目周期描述',
-          '项目复杂度分析不足',
-          '技术栈选择理由不充分'
+          '项目周期预估可能过于乐观',
+          '部分技术选型缺乏详细论证'
         ];
         result.value.improvement = [
-          '增加项目周期和里程碑描述',
-          '补充项目复杂度分析',
-          '详细说明技术栈选择理由'
+          '建议增加项目周期缓冲时间',
+          '补充技术选型对比分析'
         ];
-        result.value.keywords = ['项目规模', '技术架构', '团队配置', '项目目标'];
+        result.value.keywords = ['项目规模', '人员配置', '预算估算', '风险评估'];
         break;
       case 'background_analysis':
-        result.value.success = false;
-        result.value.score = 72;
-        result.value.message = '项目背景段检查完成，发现问题';
-        result.value.type = 'background_analysis';
+        result.value.success = true;
+        result.value.score = 78;
+        result.value.message = '项目背景分析完成';
+        result.value.type = '项目背景段检查';
         result.value.strengths = [
-          '业务需求描述清晰',
-          '问题背景分析到位',
-          '项目价值明确'
+          '项目背景描述清晰，目标明确',
+          '业务需求分析较为全面',
+          '技术挑战识别准确'
         ];
         result.value.weaknesses = [
-          '项目背景描述不够新颖',
-          '发起单位性质与项目表述匹配度较低',
-          '技术架构描述不够详细',
-          '存在2处语法错误'
+          '项目发起单位介绍不够详细',
+          '部分技术术语使用不够准确'
         ];
         result.value.improvement = [
-          '使用更具行业特色的背景描述',
-          '调整发起单位性质与项目的匹配度',
-          '补充技术架构细节',
-          '修正语法错误'
+          '补充项目发起单位背景介绍',
+          '规范技术术语使用'
         ];
-        result.value.keywords = ['业务需求', '问题背景', '项目价值', '技术架构'];
+        result.value.keywords = ['项目背景', '业务需求', '技术挑战'];
         break;
       case 'transition_check':
         result.value.success = true;
-        result.value.score = 88;
+        result.value.score = 92;
         result.value.message = '过渡段检查完成';
-        result.value.type = 'transition_check';
+        result.value.type = '过渡段检查';
         result.value.strengths = [
-          '过渡段对于项目特点的表述合理',
-          '上下文衔接自然',
-          '逻辑关系清晰'
+          '段落间衔接自然流畅',
+          '逻辑关系表达清晰',
+          '过渡词使用恰当'
         ];
-        result.value.weaknesses = [
-          '过渡句类型单一',
-          '缺少承上启下的连接词',
-          '部分段落转换生硬'
-        ];
+        result.value.weaknesses = [];
         result.value.improvement = [
-          '增加过渡句的多样性',
-          '适当添加连接词增强逻辑性',
-          '优化段落转换方式'
+          '可考虑增加更多对比分析'
         ];
-        result.value.keywords = ['过渡段', '上下文衔接', '逻辑关系', '连接词'];
+        result.value.keywords = ['过渡段', '逻辑关系', '衔接自然'];
         break;
       case 'conclusion_check':
-        result.value.success = false;
-        result.value.score = 75;
-        result.value.message = '结尾段检查完成，发现问题';
-        result.value.type = 'conclusion_check';
+        result.value.success = true;
+        result.value.score = 88;
+        result.value.message = '结尾段检查完成';
+        result.value.type = '结尾段检查';
         result.value.strengths = [
-          '总结了项目主要成果',
-          '提及了项目经验教训',
-          '结构完整'
+          '总结全面，涵盖要点',
+          '未来展望具有前瞻性',
+          '经验总结深刻'
         ];
         result.value.weaknesses = [
-          '建设收益描述不够具体',
-          '实施过程反思不够深入',
-          '未来展望不够明确'
+          '部分结论过于笼统'
         ];
         result.value.improvement = [
-          '使用具体数据描述建设收益',
-          '深入分析实施过程中的问题和解决方法',
-          '明确未来发展方向和改进计划'
+          '细化具体实施建议',
+          '量化部分成果指标'
         ];
-        result.value.keywords = ['项目成果', '经验教训', '建设收益', '未来展望'];
+        result.value.keywords = ['总结', '展望', '经验'];
         break;
       case 'management_check':
         result.value.success = true;
-        result.value.score = 90;
+        result.value.score = 80;
         result.value.message = '十大管理检查完成';
-        result.value.type = 'management_check';
+        result.value.type = '十大管理检查';
         result.value.strengths = [
-          '管理过程表述完整',
-          '包含了作用和重要性描述',
-          '实施过程描述清晰',
-          '产出成果明确',
-          '管理工具应用得当'
+          '项目管理过程描述完整',
+          '工具和技术运用得当',
+          '输入输出关系明确'
         ];
         result.value.weaknesses = [
-          '风险管理措施不够具体',
-          '质量管理方法描述简单',
-          '缺少团队管理细节'
+          '部分管理过程关联性不够强',
+          '个别环节缺少具体实例'
         ];
         result.value.improvement = [
-          '补充具体的风险管理措施',
-          '详细描述质量管理方法和工具',
-          '增加团队管理和沟通协调的细节'
+          '加强各管理过程间的关联性',
+          '补充更多具体实施案例'
         ];
-        result.value.keywords = ['项目管理', '风险管理', '质量管理', '团队管理'];
+        result.value.keywords = ['项目管理', '十大领域', '过程组'];
         break;
       default:
         result.value.success = true;
-        result.value.score = 80;
+        result.value.score = 85;
         result.value.message = '校验完成';
-        result.value.type = 'general';
-        result.value.strengths = ['内容完整', '结构清晰', '逻辑连贯'];
-        result.value.weaknesses = ['缺少具体案例', '分析深度不足'];
-        result.value.improvement = ['增加具体案例支持', '深入分析问题本质'];
-        result.value.keywords = ['内容结构', '逻辑分析', '案例支持'];
+        result.value.type = '综合校验';
+        result.value.strengths = ['内容完整', '结构清晰'];
+        result.value.weaknesses = ['部分细节需要完善'];
+        result.value.improvement = ['细化部分内容'];
+        result.value.keywords = ['综合', '内容', '结构'];
     }
-    
-    // 合并所有建议
-    result.value.suggestions = [...result.value.strengths, ...result.value.weaknesses, ...result.value.improvement];
     
     result.value.isLoading = false;
   }, 1500);
@@ -358,309 +355,6 @@ const executeCheck = () => {
         :content="formData.content" 
         class="mb-md"
       />
-    </main>
-  </div>
-</template>
-
-<script setup lang="ts">
-import { ref, reactive } from 'vue';
-import SmartValidationPanel from '../components/SmartValidationPanel.vue';
-
-// 智能校验类型
-const checkTypes = [
-  { value: 'project_scale', label: '项目规模智能校验' },
-  { value: 'background_analysis', label: '项目背景段检查' },
-  { value: 'transition_check', label: '过渡段检查' },
-  { value: 'conclusion_check', label: '结尾段检查' },
-  { value: 'management_check', label: '十大管理检查' }
-];
-
-// 表单数据
-const formData = reactive({
-  checkType: 'project_scale',
-  content: '',
-  contentSource: 'manual' // manual, auto (from writing page)
-});
-
-// 校验结果
-const result = ref({
-  isLoading: false,
-  success: false,
-  message: '',
-  score: 0, // 校验评分
-  type: '', // 校验类型
-  suggestions: [] as string[],
-  strengths: [] as string[], // 优点
-  weaknesses: [] as string[], // 缺点
-  improvement: [] as string[], // 改进方向
-  keywords: [] as string[], // 提取的关键词
-  wordCount: 0 // 字数统计
-});
-
-// 从写作页面获取内容
-const getContentFromWriting = () => {
-  const savedContent = localStorage.getItem('paperContent');
-  if (savedContent) {
-    try {
-      const parsedContent = JSON.parse(savedContent);
-      // 根据校验类型自动选择对应的内容段
-      switch (formData.checkType) {
-        case 'background_analysis':
-          formData.content = parsedContent.background || '';
-          break;
-        case 'transition_check':
-          // 合并背景和问题分析作为过渡段检查
-          formData.content = `${parsedContent.background || ''}\n\n${parsedContent.problemAnalysis || ''}`;
-          break;
-        case 'conclusion_check':
-          formData.content = parsedContent.conclusion || '';
-          break;
-        case 'project_scale':
-          // 项目规模检查使用整个论文内容
-          formData.content = Object.values(parsedContent).join('\n\n');
-          break;
-        case 'management_check':
-          // 管理检查使用解决方案和实施过程
-          formData.content = `${parsedContent.solution || ''}\n\n${parsedContent.implementation || ''}`;
-          break;
-        default:
-          formData.content = Object.values(parsedContent).join('\n\n');
-      }
-      formData.contentSource = 'auto';
-    } catch (error) {
-      console.error('Failed to parse saved content:', error);
-    }
-  } else {
-    alert('未找到已保存的论文内容，请先在写作页面保存内容');
-  }
-};
-
-// 根据评分获取样式类
-const getScoreClass = (score: number): string => {
-  if (score >= 90) return 'score-excellent';
-  if (score >= 80) return 'score-good';
-  if (score >= 70) return 'score-average';
-  return 'score-poor';
-};
-
-// 执行智能校验
-const executeCheck = () => {
-  result.value.isLoading = true;
-  result.value.success = false;
-  result.value.message = '';
-  result.value.suggestions = [];
-  result.value.strengths = [];
-  result.value.weaknesses = [];
-  result.value.improvement = [];
-  result.value.keywords = [];
-  result.value.wordCount = formData.content.length;
-  
-  // 模拟校验过程
-  setTimeout(() => {
-    // 根据不同的校验类型生成不同的结果
-    switch (formData.checkType) {
-      case 'project_scale':
-        result.value.success = true;
-        result.value.score = 85;
-        result.value.message = '项目规模校验完成';
-        result.value.type = '项目规模智能校验';
-        result.value.strengths = [
-          '项目规模设定合理，符合实际业务需求',
-          '人员配置比例恰当，技术架构清晰',
-          '预算估算详细，风险评估充分'
-        ];
-        result.value.weaknesses = [
-          '项目周期预估可能过于乐观',
-          '部分技术选型缺乏详细论证'
-        ];
-        result.value.improvement = [
-          '建议增加项目周期缓冲时间',
-          '补充技术选型对比分析'
-        ];
-        result.value.keywords = ['项目规模', '人员配置', '预算估算', '风险评估'];
-        break;
-      case 'background_analysis':
-        result.value.success = true;
-        result.value.score = 78;
-        result.value.message = '项目背景分析完成';
-        result.value.type = '项目背景段检查';
-        result.value.strengths = [
-          '项目背景描述清晰，目标明确',
-          '业务需求分析较为全面',
-          '技术挑战识别准确'
-        ];
-        result.value.weaknesses = [
-          '项目发起单位介绍不够详细',
-          '部分技术术语使用不够准确'
-        ];
-        result.value.improvement = [
-          '补充项目发起单位背景介绍',
-          '规范技术术语使用'
-        ];
-        result.value.keywords = ['项目背景', '业务需求', '技术挑战'];
-        break;
-      case 'transition_check':
-        result.value.success = true;
-        result.value.score = 92;
-        result.value.message = '过渡段检查完成';
-        result.value.type = '过渡段检查';
-        result.value.strengths = [
-          '段落间衔接自然流畅',
-          '逻辑关系表达清晰',
-          '过渡词使用恰当'
-        ];
-        result.value.weaknesses = [];
-        result.value.improvement = [
-          '可考虑增加更多对比分析'
-        ];
-        result.value.keywords = ['过渡段', '逻辑关系', '衔接自然'];
-        break;
-      case 'conclusion_check':
-        result.value.success = true;
-        result.value.score = 88;
-        result.value.message = '结尾段检查完成';
-        result.value.type = '结尾段检查';
-        result.value.strengths = [
-          '总结全面，涵盖要点',
-          '未来展望具有前瞻性',
-          '经验总结深刻'
-        ];
-        result.value.weaknesses = [
-          '部分结论过于笼统'
-        ];
-        result.value.improvement = [
-          '细化具体实施建议',
-          '量化部分成果指标'
-        ];
-        result.value.keywords = ['总结', '展望', '经验'];
-        break;
-      case 'management_check':
-        result.value.success = true;
-        result.value.score = 80;
-        result.value.message = '十大管理检查完成';
-        result.value.type = '十大管理检查';
-        result.value.strengths = [
-          '项目管理过程描述完整',
-          '工具和技术运用得当',
-          '输入输出关系明确'
-        ];
-        result.value.weaknesses = [
-          '部分管理过程关联性不够强',
-          '个别环节缺少具体实例'
-        ];
-        result.value.improvement = [
-          '加强各管理过程间的关联性',
-          '补充更多具体实施案例'
-        ];
-        result.value.keywords = ['项目管理', '十大领域', '过程组'];
-        break;
-      default:
-        result.value.success = true;
-        result.value.score = 85;
-        result.value.message = '校验完成';
-        result.value.type = '综合校验';
-        result.value.strengths = ['内容完整', '结构清晰'];
-        result.value.weaknesses = ['部分细节需要完善'];
-        result.value.improvement = ['细化部分内容'];
-        result.value.keywords = ['综合', '内容', '结构'];
-    }
-    
-    result.value.isLoading = false;
-  }, 1500);
-};
-
-// 获取占位符文本
-const getPlaceholderText = (): string => {
-  switch (formData.checkType) {
-    case 'project_scale':
-      return '请输入项目规模相关信息，包括项目预算、人员配置、技术架构等内容...';
-    case 'background_analysis':
-      return '请输入项目背景相关信息，包括项目发起单位、项目目标、业务需求等内容...';
-    case 'transition_check':
-      return '请输入需要检查过渡段的内容...';
-    case 'conclusion_check':
-      return '请输入结尾段内容，包括总结、经验、展望等内容...';
-    case 'management_check':
-      return '请输入项目管理相关内容，包括十大管理领域的实施情况...';
-    default:
-      return '请输入需要校验的内容...';
-  }
-};
-</script>
-      
-      <div class="check-result" v-if="result.message">
-        <h2>校验结果</h2>
-        <div class="result-header">
-          <span class="result-message" :class="{ success: result.success, error: !result.success }">
-            {{ result.message }}
-          </span>
-          <div class="result-meta">
-            <span class="meta-item">
-              <strong>评分：</strong>
-              <span class="score" :class="getScoreClass(result.score)">{{ result.score }}分</span>
-            </span>
-            <span class="meta-item">
-              <strong>字数：</strong>{{ result.wordCount }}字
-            </span>
-          </div>
-        </div>
-        
-        <!-- 关键词标签 -->
-        <div class="keywords-section" v-if="result.keywords.length > 0">
-          <h3>提取关键词：</h3>
-          <div class="keyword-tags">
-            <span 
-              v-for="(keyword, index) in result.keywords" 
-              :key="index" 
-              class="keyword-tag"
-            >
-              {{ keyword }}
-            </span>
-          </div>
-        </div>
-        
-        <!-- 校验详情卡片 -->
-        <div class="result-cards">
-          <!-- 优点卡片 -->
-          <div class="result-card strengths-card">
-            <h3 class="card-title">
-              <span class="card-icon">✅</span>
-              优点
-            </h3>
-            <ul class="card-list">
-              <li v-for="(strength, index) in result.strengths" :key="index" class="card-item">
-                {{ strength }}
-              </li>
-            </ul>
-          </div>
-          
-          <!-- 缺点卡片 -->
-          <div class="result-card weaknesses-card">
-            <h3 class="card-title">
-              <span class="card-icon">⚠️</span>
-              问题
-            </h3>
-            <ul class="card-list">
-              <li v-for="(weakness, index) in result.weaknesses" :key="index" class="card-item">
-                {{ weakness }}
-              </li>
-            </ul>
-          </div>
-          
-          <!-- 改进建议卡片 -->
-          <div class="result-card improvement-card">
-            <h3 class="card-title">
-              <span class="card-icon">💡</span>
-              改进建议
-            </h3>
-            <ul class="card-list">
-              <li v-for="(item, index) in result.improvement" :key="index" class="card-item">
-                {{ item }}
-              </li>
-            </ul>
-          </div>
-        </div>
-      </div>
     </main>
   </div>
 </template>

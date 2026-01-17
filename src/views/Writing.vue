@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref, reactive, onMounted, computed, watch } from 'vue';
+import { useRouter } from 'vue-router';
 import { getUserLevel, hasFeatureAccess } from '../store/userLevel';
 import { getSyllabusBySubject } from '../store/examSyllabus';
 import { getTemplatesByLevelAndSubject, getTemplateById } from '../store/paperTemplates';
@@ -76,7 +77,7 @@ const applyTemplate = (templateId: string) => {
   const template = getTemplateById(templateId);
   if (template) {
     // 应用模板内容
-    Object.assign(paperContent, template.content);
+    Object.assign(paperContent.value, template.content);
     // 更新字数统计
     updateWordCount();
     // 关闭模板选择模态框
@@ -109,7 +110,7 @@ const formattedTime = computed(() => {
 const autoSave = () => {
   writingConfig.isAutoSaving = true;
   // 保存到本地存储
-  localStorage.setItem('paperContent', JSON.stringify(paperContent));
+  localStorage.setItem('paperContent', JSON.stringify(paperContent.value));
   // 更新最后保存时间
   const now = new Date();
   writingConfig.lastSaveTime = now.toLocaleTimeString();
@@ -129,7 +130,7 @@ const loadPaperContent = () => {
   if (savedContent) {
     try {
       const parsedContent = JSON.parse(savedContent);
-      Object.assign(paperContent, parsedContent);
+      Object.assign(paperContent.value, parsedContent);
       updateWordCount();
     } catch (error) {
       console.error('Failed to parse paperContent from localStorage:', error);
@@ -164,6 +165,9 @@ const startCountdown = () => {
 // 自动保存定时器
 let autoSaveTimer: number | null = null;
 
+// 路由器实例
+const router = useRouter();
+
 // 提交状态
 const isSubmitting = ref(false);
 
@@ -175,17 +179,40 @@ const startAutoSave = () => {
 };
 
 // 提交论文
-const submitPaper = () => {
+const submitPaper = async () => {
   isSubmitting.value = true;
-  // 保存论文内容
-  autoSave();
-  // 模拟提交过程
-  setTimeout(() => {
-    isSubmitting.value = false;
+  try {
+    // 保存论文内容
+    autoSave();
+    
+    // 验证论文内容
+    const contentValues = Object.values(paperContent.value);
+    const hasContent = contentValues.some(content => content && content.trim());
+    
+    if (!hasContent) {
+      alert('请先填写论文内容再提交！');
+      isSubmitting.value = false;
+      return;
+    }
+    
+    // 模拟提交过程
+    await new Promise(resolve => setTimeout(resolve, 1500));
+    
     // 显示提交成功提示
     alert('论文提交成功！');
-    // 可以根据需要跳转到其他页面
-  }, 1500);
+    
+    // 清除本地存储的内容
+    localStorage.removeItem('paperContent');
+    
+    // 跳转到提交成功页面
+    router.push('/paper-submit-success');
+    
+  } catch (error) {
+    console.error('提交论文时发生错误:', error);
+    alert('提交失败，请稍后重试');
+  } finally {
+    isSubmitting.value = false;
+  }
 };
 
 // 页面加载时检查是否有保存的内容或选定的模板
@@ -200,7 +227,7 @@ onMounted(() => {
       template.sections.forEach((section: any) => {
         templateBasedContent[section.id] = section.placeholder || '';
       });
-      paperContent.value = templateBasedContent;
+      paperContent.value = { ...paperContent.value, ...templateBasedContent };
       
       // 清除已使用的模板
       localStorage.removeItem('selectedTemplate');

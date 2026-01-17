@@ -33,7 +33,7 @@
           :key="index"
         >
           <div class="error-header flex-between">
-            <span class="error-type" :class="'type-' + error.type">{{ errorTypeLabels[error.type] }}</span>
+            <span class="error-type" :class="'type-' + (typeof error.type !== 'undefined' ? error.type : 'repeated')">{{ errorTypeLabels[(error.type || 'repeated') as keyof typeof errorTypeLabels] }}</span>
             <span class="error-position">第{{ error.position }}位</span>
           </div>
           <div class="error-message">{{ error.message }}</div>
@@ -52,7 +52,7 @@
           :key="index"
         >
           <div class="suggestion-header flex-between">
-            <span class="suggestion-type" :class="'type-' + suggestion.type">{{ suggestionTypeLabels[suggestion.type] }}</span>
+            <span class="suggestion-type" :class="'type-' + (typeof suggestion.type !== 'undefined' ? suggestion.type : 'improvement')">{{ suggestionTypeLabels[(suggestion.type || 'improvement') as keyof typeof suggestionTypeLabels] }}</span>
             <span class="suggestion-position">第{{ suggestion.position }}位</span>
           </div>
           <div class="suggestion-message">{{ suggestion.message }}</div>
@@ -175,6 +175,10 @@ import { ref, watch, computed } from 'vue';
 import ChineseTextAnalyzer from '@/utils/chineseTextAnalyzer';
 import AdvancedChineseAnalyzer from '@/utils/advancedChineseAnalyzer';
 
+// 导入所需类型
+import type { AnalysisResult } from '@/utils/chineseTextAnalyzer';
+import type { AdvancedAnalysisResult } from '@/utils/advancedChineseAnalyzer';
+
 // 定义props
 interface Props {
   content: string;
@@ -183,7 +187,7 @@ interface Props {
 const props = defineProps<Props>();
 
 // 分析结果
-const analysisResult = ref({
+const analysisResult = ref<AnalysisResult>({
   wordCount: 0,
   charCount: 0,
   sentenceCount: 0,
@@ -196,7 +200,7 @@ const analysisResult = ref({
 });
 
 // 高级分析结果
-const advancedAnalysis = ref({
+const advancedAnalysis = ref<AdvancedAnalysisResult>({
   basic: {
     charCount: 0,
     wordCount: 0,
@@ -247,13 +251,31 @@ watch(
       // 使用防抖机制避免频繁分析
       setTimeout(async () => {
         try {
-          analysisResult.value = ChineseTextAnalyzer.analyze(newContent);
-          structureEvaluation.value = ChineseTextAnalyzer.evaluateStructure(newContent);
-          
-          // 执行高级分析
-          advancedAnalysis.value = AdvancedChineseAnalyzer.analyze(newContent);
+          // 确保分析器已加载
+          if (ChineseTextAnalyzer && AdvancedChineseAnalyzer) {
+            analysisResult.value = ChineseTextAnalyzer.analyze(newContent);
+            structureEvaluation.value = ChineseTextAnalyzer.evaluateStructure(newContent);
+            
+            // 执行高级分析
+            advancedAnalysis.value = AdvancedChineseAnalyzer.analyze(newContent);
+          } else {
+            // 如果分析器未加载，使用模拟数据
+            console.warn('Text analyzers not loaded yet');
+          }
         } catch (error) {
           console.error('文本分析出错:', error);
+          // 设置默认值避免界面崩溃
+          analysisResult.value = {
+            wordCount: 0,
+            charCount: 0,
+            sentenceCount: 0,
+            paragraphCount: 0,
+            avgSentenceLength: 0,
+            errors: [],
+            suggestions: [],
+            keywords: [],
+            readability: 0
+          };
         }
       }, 500);
     } else {

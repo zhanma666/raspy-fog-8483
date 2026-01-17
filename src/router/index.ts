@@ -1,12 +1,13 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import Home from '../views/Home.vue';
-import Login from '../views/Login.vue';
+import Login from '../components/Login.vue';
 import Exam from '../views/Exam.vue';
 import ExamInfo from '../views/ExamInfo.vue';
 import Writing from '../views/Writing.vue';
 import SmartCheck from '../views/SmartCheck.vue';
 import QuestionBank from '../views/QuestionBank.vue';
 import TemplateManager from '../views/TemplateManager.vue';
+import PaperSubmitSuccess from '../views/PaperSubmitSuccess.vue';
 
 const routes = [
   {
@@ -48,6 +49,11 @@ const routes = [
     path: '/templates',
     name: 'TemplateManager',
     component: TemplateManager
+  },
+  {
+    path: '/paper-submit-success',
+    name: 'PaperSubmitSuccess',
+    component: PaperSubmitSuccess
   },
   // 重定向所有未匹配的路由到首页
   {
