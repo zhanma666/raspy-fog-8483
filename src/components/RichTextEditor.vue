@@ -112,7 +112,7 @@
     
     <div class="editor-content" :class="{ 'readonly': readonly }">
       <editor-content 
-        :editor="editor" 
+        :editor="editor as Editor"
         class="editor-body"
       />
     </div>
@@ -153,6 +153,8 @@ const emit = defineEmits<{
 
 // 编辑器实例
 const editor = ref<Editor | null>(null);
+
+
 
 // 字数统计
 const wordCount = computed(() => {

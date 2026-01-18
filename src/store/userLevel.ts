@@ -41,7 +41,12 @@ export const DEFAULT_USER_LEVEL: UserLevel = userLevels[0] as UserLevel;
 export const getUserLevel = (): UserLevel => {
   const storedLevel = localStorage.getItem('userLevel');
   if (storedLevel) {
-    return JSON.parse(storedLevel);
+    try {
+      return JSON.parse(storedLevel);
+    } catch (error) {
+      console.error('Failed to parse user level from localStorage:', error);
+      return DEFAULT_USER_LEVEL;
+    }
   }
   return DEFAULT_USER_LEVEL;
 };

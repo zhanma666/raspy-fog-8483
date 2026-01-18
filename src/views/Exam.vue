@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, computed } from 'vue';
 
 // 软考高级科目映射
 const examTypeMap: Record<string, string> = {
@@ -13,6 +13,19 @@ const examTimeMap: Record<string, string> = {
   '202605': '2026年上半年（5月下旬）',
   '202611': '2026年下半年（11月上旬）'
 };
+
+// 获取当前考试时间
+const currentExamTime = computed(() => {
+  const now = new Date();
+  const year = now.getFullYear();
+  const month = now.getMonth();
+  
+  // 简化逻辑：上半年（< 6月）和下半年（>= 6月）
+  // 使用当前年份动态生成考试时间键
+  const currentYear = year.toString().slice(-2);
+  const period = month < 5 ? `${currentYear}05` : `${currentYear}11`;
+  return examTimeMap[period] || `待定 ${year}年`;
+});
 
 // 初始考生信息
 const examInfo = ref({
@@ -30,11 +43,18 @@ const examInfo = ref({
 const loadExamInfo = () => {
   const storedInfo = localStorage.getItem('examInfo');
   if (storedInfo) {
-    const parsedInfo = JSON.parse(storedInfo);
-    examInfo.value.name = parsedInfo.name;
-    examInfo.value.gender = parsedInfo.gender || '男';
-    examInfo.value.idCard = parsedInfo.idCard;
-    examInfo.value.examType = examTypeMap[parsedInfo.examType] || '系统架构设计师';
+    try {
+      const parsedInfo = JSON.parse(storedInfo);
+      // 验证解析的数据结构
+      if (typeof parsedInfo === 'object' && parsedInfo !== null) {
+        examInfo.value.name = parsedInfo.name;
+        examInfo.value.gender = parsedInfo.gender || '男';
+        examInfo.value.idCard = parsedInfo.idCard;
+        examInfo.value.examType = examTypeMap[parsedInfo.examType] || '系统架构设计师';
+      }
+    } catch (error) {
+      console.error('Failed to parse examInfo from localStorage:', error);
+    }
     examInfo.value.examTime = '120分钟'; // 论文考试标准时间
   }
 };
@@ -146,7 +166,7 @@ onMounted(() => {
         </div>
         <div class="exam-details">
           <div><strong>考试类型:</strong> {{ examInfo.examType }}</div>
-          <div><strong>考试时间:</strong> {{ examInfo.examTime }}</div>
+          <div><strong>考试时间:</strong> {{ currentExamTime }}</div>
           <div><strong>试卷加载:</strong> {{ examInfo.examStatus }}</div>
         </div>
         <div class="countdown">

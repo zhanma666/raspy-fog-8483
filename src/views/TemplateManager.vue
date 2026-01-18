@@ -260,7 +260,8 @@
 <script setup lang="ts">
 import { ref, reactive, onMounted, computed } from 'vue';
 import { useRouter } from 'vue-router';
-import PaperTemplateManager, { PaperTemplate } from '@/utils/paperTemplateManager';
+import { PaperTemplateManager } from '@/utils/paperTemplateManager';
+import type { PaperTemplate } from '@/utils/paperTemplateManager';
 
 // 路由
 const router = useRouter();
@@ -290,7 +291,7 @@ const filteredTemplates = computed(() => {
     result = result.filter(t => 
       t.title.toLowerCase().includes(searchLower) ||
       t.description.toLowerCase().includes(searchLower) ||
-      t.tags.some(tag => tag.toLowerCase().includes(searchLower))
+      t.tags.some((tag: string) => tag.toLowerCase().includes(searchLower))
     );
   }
   
@@ -353,7 +354,7 @@ const editTemplate = (template: PaperTemplate) => {
     level: template.level,
     description: template.description,
     tags: [...template.tags],
-    sections: template.sections.map(section => ({ ...section }))
+    sections: template.sections.map((section: any) => ({ ...section }))
   };
   showCreateModal.value = true;
 };
@@ -459,8 +460,8 @@ const formatDate = (dateString: string) => {
 // 检查是否为默认模板
 const isDefaultTemplate = (id: string) => {
   return PaperTemplateManager.getAllTemplates().some(
-    t => t.id === id && 
-    PaperTemplateManager['defaultTemplates'].some(dt => dt.id === id)
+    (t: PaperTemplate) => t.id === id && 
+    PaperTemplateManager['defaultTemplates'].some((dt: PaperTemplate) => dt.id === id)
   );
 };
 </script>

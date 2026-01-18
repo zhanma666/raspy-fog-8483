@@ -41,11 +41,16 @@ export const login = (user: string, password: string) => {
     // 从本地存储获取用户信息
     const storedUser = localStorage.getItem('user');
     if (storedUser) {
-      const parsedUser = JSON.parse(storedUser);
-      if (parsedUser.username === user && parsedUser.password === password) {
-        isLoggedIn.value = true;
-        username.value = user;
-        return true;
+      try {
+        const parsedUser = JSON.parse(storedUser);
+        if (parsedUser.username === user && parsedUser.password === password) {
+          isLoggedIn.value = true;
+          username.value = user;
+          return true;
+        }
+      } catch (error) {
+        console.error('Failed to parse user data from localStorage:', error);
+        return false;
       }
     }
     // 注意：这里不再允许未经注册的用户登录
@@ -58,9 +63,14 @@ export const verifySecurityQuestion = (user: string, securityAnswer: string) => 
   // 从本地存储获取用户信息
   const storedUser = localStorage.getItem('user');
   if (storedUser) {
-    const parsedUser = JSON.parse(storedUser);
-    if (parsedUser.username === user && parsedUser.securityAnswer === securityAnswer) {
-      return true;
+    try {
+      const parsedUser = JSON.parse(storedUser);
+      if (parsedUser.username === user && parsedUser.securityAnswer === securityAnswer) {
+        return true;
+      }
+    } catch (error) {
+      console.error('Failed to parse user data from localStorage:', error);
+      return false;
     }
   }
   return false;
@@ -71,12 +81,17 @@ export const resetPassword = (user: string, newPassword: string) => {
   // 从本地存储获取用户信息
   const storedUser = localStorage.getItem('user');
   if (storedUser) {
-    const parsedUser = JSON.parse(storedUser);
-    if (parsedUser.username === user) {
-      // 更新密码
-      parsedUser.password = newPassword;
-      localStorage.setItem('user', JSON.stringify(parsedUser));
-      return true;
+    try {
+      const parsedUser = JSON.parse(storedUser);
+      if (parsedUser.username === user) {
+        // 更新密码
+        parsedUser.password = newPassword;
+        localStorage.setItem('user', JSON.stringify(parsedUser));
+        return true;
+      }
+    } catch (error) {
+      console.error('Failed to parse user data from localStorage:', error);
+      return false;
     }
   }
   return false;
@@ -87,9 +102,14 @@ export const getUserSecurityQuestion = (user: string) => {
   // 从本地存储获取用户信息
   const storedUser = localStorage.getItem('user');
   if (storedUser) {
-    const parsedUser = JSON.parse(storedUser);
-    if (parsedUser.username === user) {
-      return parsedUser.securityQuestion;
+    try {
+      const parsedUser = JSON.parse(storedUser);
+      if (parsedUser.username === user) {
+        return parsedUser.securityQuestion;
+      }
+    } catch (error) {
+      console.error('Failed to parse user data from localStorage:', error);
+      return null;
     }
   }
   return null;

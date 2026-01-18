@@ -288,7 +288,15 @@ export class PaperTemplateManager {
    */
   private static getCustomTemplates(): PaperTemplate[] {
     const stored = localStorage.getItem('customPaperTemplates');
-    return stored ? JSON.parse(stored) : [];
+    if (stored) {
+      try {
+        return JSON.parse(stored);
+      } catch (error) {
+        console.error('Failed to parse custom paper templates from localStorage:', error);
+        return [];
+      }
+    }
+    return [];
   }
 
   /**
@@ -339,7 +347,7 @@ export class PaperTemplateManager {
       const template: PaperTemplate = JSON.parse(jsonString);
       
       // 验证模板结构
-      if (!template.id || !template.title || !template.sections) {
+      if (typeof template !== 'object' || template === null || !template.id || !template.title || !template.sections) {
         return false;
       }
       

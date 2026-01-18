@@ -232,8 +232,13 @@ export class AdvancedChineseAnalyzer {
       }
     }
     
+    // 使用segments计算相关性
+    const segmentKeywordMatches = segments.filter(segment => 
+      relevantKeywords.some(keyword => segment.includes(keyword))
+    ).length;
+    
     // 主题相关性分数（0-100）
-    const relevanceScore = Math.min(100, Math.round((keywordCount / relevantKeywords.length) * 150));
+    const relevanceScore = Math.min(100, Math.round(((keywordCount + segmentKeywordMatches) / relevantKeywords.length) * 100));
     
     return Math.max(0, relevanceScore);
   }
@@ -253,6 +258,13 @@ export class AdvancedChineseAnalyzer {
     // 检查段落数量
     if (basic.paragraphCount < 3) {
       suggestions.push('段落数较少，建议按主题分段以改善结构');
+    }
+    
+    // 检查词汇多样性
+    const uniqueSegments = new Set(segments);
+    const diversityRatio = uniqueSegments.size / segments.length;
+    if (diversityRatio < 0.5) {
+      suggestions.push('词汇重复率较高，建议丰富词汇表达');
     }
     
     // 检查过渡词使用

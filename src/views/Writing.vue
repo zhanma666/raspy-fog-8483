@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, reactive, onMounted, computed, watch } from 'vue';
+import { ref, reactive, onMounted, onUnmounted, computed, watch } from 'vue';
 import { useRouter } from 'vue-router';
 import { getUserLevel, hasFeatureAccess } from '../store/userLevel';
 import { getSyllabusBySubject } from '../store/examSyllabus';
@@ -58,7 +58,10 @@ const initTemplates = () => {
   if (examInfo) {
     try {
       const parsedInfo = JSON.parse(examInfo);
-      subject = parsedInfo.examType || '系统架构设计师';
+      // 验证解析的数据结构
+      if (typeof parsedInfo === 'object' && parsedInfo !== null) {
+        subject = parsedInfo.examType || '系统架构设计师';
+      }
     } catch (e) {
       console.error('Failed to parse examInfo from localStorage:', e);
       subject = '系统架构设计师';
@@ -130,7 +133,10 @@ const loadPaperContent = () => {
   if (savedContent) {
     try {
       const parsedContent = JSON.parse(savedContent);
-      Object.assign(paperContent.value, parsedContent);
+      // 验证解析的数据结构
+      if (typeof parsedContent === 'object' && parsedContent !== null) {
+        Object.assign(paperContent.value, parsedContent);
+      }
       updateWordCount();
     } catch (error) {
       console.error('Failed to parse paperContent from localStorage:', error);
@@ -156,6 +162,7 @@ const startCountdown = () => {
       // 时间到
       if (countdownTimer) {
         clearInterval(countdownTimer);
+        countdownTimer = null;
       }
       alert('考试时间结束！');
     }
@@ -215,6 +222,18 @@ const submitPaper = async () => {
   }
 };
 
+// 清除定时器
+const clearTimers = () => {
+  if (countdownTimer) {
+    clearInterval(countdownTimer);
+    countdownTimer = null;
+  }
+  if (autoSaveTimer) {
+    clearInterval(autoSaveTimer);
+    autoSaveTimer = null;
+  }
+};
+
 // 页面加载时检查是否有保存的内容或选定的模板
 onMounted(() => {
   // 首先检查是否有选定的模板
@@ -222,12 +241,15 @@ onMounted(() => {
   if (selectedTemplate) {
     try {
       const template = JSON.parse(selectedTemplate);
-      // 根据模板初始化内容
-      const templateBasedContent: any = {};
-      template.sections.forEach((section: any) => {
-        templateBasedContent[section.id] = section.placeholder || '';
-      });
-      paperContent.value = { ...paperContent.value, ...templateBasedContent };
+      // 验证解析的数据结构
+      if (typeof template === 'object' && template !== null && Array.isArray(template.sections)) {
+        // 根据模板初始化内容
+        const templateBasedContent: any = {};
+        template.sections.forEach((section: any) => {
+          templateBasedContent[section.id] = section.placeholder || '';
+        });
+        paperContent.value = { ...paperContent.value, ...templateBasedContent };
+      }
       
       // 清除已使用的模板
       localStorage.removeItem('selectedTemplate');
@@ -243,6 +265,11 @@ onMounted(() => {
   startCountdown();
   // 开始自动保存
   startAutoSave();
+});
+
+// 组件卸载前清除定时器
+onUnmounted(() => {
+  clearTimers();
 });
 </script>
 

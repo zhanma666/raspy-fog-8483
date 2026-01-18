@@ -1,38 +1,43 @@
-/* 设计系统变量 */
+/* Enter.pro 设计系统变量 */
 :root {
-  /* 主色调 - 软考蓝 */
-  --primary-color: #1890ff;
-  --primary-hover-color: #40a9ff;
-  --primary-active-color: #096dd9;
+  /* Enter.pro 主色调 - 暗色主题 */
+  --primary-color: #6366f1; /* Indigo color */
+  --primary-hover-color: #818cf8;
+  --primary-active-color: #4f46e5;
+  
+  /* 背景色 */
+  --bg-base: #000000; /* 黑色背景 */
+  --bg-primary: #18181b; /* Zinc-900 equivalent */
+  --bg-secondary: #27272a; /* Zinc-800 equivalent */
+  --bg-tertiary: #3f3f46; /* Zinc-700 equivalent */
+  
+  /* 文字颜色 */
+  --text-primary: #f4f4f5; /* Zinc-100 */
+  --text-secondary: #d4d4d8; /* Zinc-200 */
+  --text-tertiary: #a1a1aa; /* Zinc-400 */
+  --text-disabled: #71717a; /* Zinc-500 */
   
   /* 辅助色 */
-  --secondary-color: #52c41a;
-  --warning-color: #faad14;
-  --danger-color: #f5222d;
-  --info-color: #177ddc;
+  --secondary-color: #10b981; /* Emerald */
+  --warning-color: #f59e0b; /* Amber */
+  --danger-color: #ef4444; /* Red */
+  --info-color: #3b82f6; /* Blue */
   
-  /* 中性色 */
-  --text-primary: #262626;
-  --text-secondary: #595959;
-  --text-tertiary: #8c8c8c;
-  --text-disabled: #bfbfbf;
-  
-  --bg-primary: #ffffff;
-  --bg-secondary: #fafafa;
-  --bg-tertiary: #f5f5f5;
-  --border-color: #d9d9d9;
-  --border-light: #f0f0f0;
+  /* 边框颜色 */
+  --border-color: #3f3f46; /* Zinc-700 */
+  --border-light: #27272a; /* Zinc-800 */
   
   /* 阴影 */
-  --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.08);
-  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.12);
-  --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.15);
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.5);
   
   /* 圆角 */
   --radius-xs: 2px;
   --radius-sm: 4px;
   --radius-md: 8px;
   --radius-lg: 12px;
+  --radius-full: 9999px; /* For pill buttons */
   
   /* 间距 */
   --spacing-xs: 4px;
@@ -49,18 +54,25 @@
   --font-size-lg: 18px;
   --font-size-xl: 20px;
   --font-size-xxl: 24px;
+  --font-size-xxxl: 30px;
   
   --font-weight-normal: 400;
   --font-weight-medium: 500;
-  --font-weight-bold: 600;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
   
   /* 组件尺寸 */
-  --input-height: 32px;
-  --input-height-lg: 40px;
-  --input-height-sm: 24px;
+  --input-height: 36px;
+  --input-height-lg: 44px;
+  --input-height-sm: 28px;
   
-  --btn-padding: 0 15px;
-  --btn-height: 32px;
-  --btn-height-lg: 40px;
-  --btn-height-sm: 24px;
+  --btn-padding: 0 20px;
+  --btn-height: 40px;
+  --btn-height-lg: 48px;
+  --btn-height-sm: 32px;
+  
+  /* Enter.pro 特定变量 */
+  --enter-gradient-start: #6366f1;
+  --enter-gradient-end: #8b5cf6;
+  --enter-focus-glow: 0 0 0 3px rgba(99, 102, 241, 0.3);
 }

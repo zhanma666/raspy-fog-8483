@@ -360,7 +360,10 @@ const initTemplates = () => {
   if (examInfo) {
     try {
       const parsedInfo = JSON.parse(examInfo);
-      subject = parsedInfo.examType || '系统架构设计师';
+      // 验证解析的数据结构
+      if (typeof parsedInfo === 'object' && parsedInfo !== null) {
+        subject = parsedInfo.examType || '系统架构设计师';
+      }
     } catch (e) {
       console.error('Failed to parse examInfo from localStorage:', e);
       subject = '系统架构设计师';
@@ -432,7 +435,10 @@ const loadPaperContent = () => {
   if (savedContent) {
     try {
       const parsedContent = JSON.parse(savedContent);
-      Object.assign(paperContent, parsedContent);
+      // 验证解析的数据结构
+      if (typeof parsedContent === 'object' && parsedContent !== null) {
+        Object.assign(paperContent, parsedContent);
+      }
       updateWordCount();
     } catch (error) {
       console.error('Failed to parse paperContent from localStorage:', error);
@@ -458,6 +464,7 @@ const startCountdown = () => {
       // 时间到
       if (countdownTimer) {
         clearInterval(countdownTimer);
+        countdownTimer = null;
       }
       alert('考试时间结束！');
     }
@@ -497,12 +504,15 @@ onMounted(() => {
   if (selectedTemplate) {
     try {
       const template = JSON.parse(selectedTemplate);
-      // 根据模板初始化内容
-      const templateBasedContent: any = {};
-      template.sections.forEach((section: any) => {
-        templateBasedContent[section.id] = section.placeholder || '';
-      });
-      Object.assign(paperContent.value, templateBasedContent);
+      // 验证解析的数据结构
+      if (typeof template === 'object' && template !== null && Array.isArray(template.sections)) {
+        // 根据模板初始化内容
+        const templateBasedContent: any = {};
+        template.sections.forEach((section: any) => {
+          templateBasedContent[section.id] = section.placeholder || '';
+        });
+        Object.assign(paperContent.value, templateBasedContent);
+      }
       
       // 清除已使用的模板
       localStorage.removeItem('selectedTemplate');
