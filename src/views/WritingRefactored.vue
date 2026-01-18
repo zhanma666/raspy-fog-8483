@@ -301,7 +301,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, onMounted, computed, watch } from 'vue';
+import { ref, reactive, onMounted, onUnmounted, computed, watch } from 'vue';
 import { getUserLevel, hasFeatureAccess } from '../store/userLevel';
 import { getSyllabusBySubject } from '../store/examSyllabus';
 import { getTemplatesByLevelAndSubject, getTemplateById } from '../store/paperTemplates';
@@ -528,6 +528,32 @@ onMounted(() => {
   startCountdown();
   // 开始自动保存
   startAutoSave();
+});
+
+onUnmounted(() => {
+  // 清理定时器以防止内存泄漏
+  if (autoSaveTimer !== null) {
+    clearInterval(autoSaveTimer);
+    autoSaveTimer = null;
+  }
+  
+  if (countdownTimer !== null) {
+    clearInterval(countdownTimer);
+    countdownTimer = null;
+  }
+});
+
+onUnmounted(() => {
+  // 清理定时器以防止内存泄漏
+  if (autoSaveTimer !== null) {
+    clearInterval(autoSaveTimer);
+    autoSaveTimer = null;
+  }
+  
+  if (countdownTimer !== null) {
+    clearInterval(countdownTimer);
+    countdownTimer = null;
+  }
 });
 </script>
 

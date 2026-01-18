@@ -121,12 +121,12 @@ const backToList = () => {
         <div class="detail-header">
           <button class="back-btn" @click="backToList">← 返回列表</button>
           <div class="detail-meta">
-            <span class="year">{{ selectedQuestion.year }}年{{ selectedQuestion.period }}</span>
-            <span class="category">{{ categories.find(c => c.value === selectedQuestion.category)?.label }}</span>
+            <span class="year">{{ selectedQuestion?.year }}年{{ selectedQuestion?.period }}</span>
+            <span class="category">{{ categories.find(c => c.value === selectedQuestion?.category)?.label }}</span>
           </div>
         </div>
-        <h2 class="detail-title">{{ selectedQuestion.title }}</h2>
-        <div class="detail-content">{{ selectedQuestion.content }}</div>
+        <h2 class="detail-title">{{ selectedQuestion?.title }}</h2>
+        <div class="detail-content">{{ selectedQuestion?.content }}</div>
         <div class="action-buttons">
           <button class="btn primary">开始练习</button>
           <button class="btn secondary">收藏题目</button>
@@ -273,6 +273,7 @@ const backToList = () => {
   text-overflow: ellipsis;
   display: -webkit-box;
   -webkit-line-clamp: 3;
+  line-clamp: 3;
   -webkit-box-orient: vertical;
 }
 
